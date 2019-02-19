@@ -124,8 +124,99 @@ describe("File operations", () => {
   });
 });
 
-/*describe("Folder operations", () => {
-  it("should add folder succesfully", () => {});
-  it("should rename file succesfully", () => {});
-  it("should delete file succesfully", () => {});
-});*/
+describe("Folder operations", () => {
+  it("should add folder succesfully", () => {
+    const testInitialState = Object.assign({}, initialState);
+    const folder = {
+      key: "1234",
+      name: "folder test",
+      parent: null
+    };
+
+    const expectedState = Object.assign({}, testInitialState, {
+      folders: {
+        [folder.key]: folder
+      }
+    });
+
+    expect(
+      reducer(testInitialState, {
+        type: actionTypes.DIR_ADD,
+        folder
+      })
+    ).toEqual(expectedState);
+  });
+
+  it("should rename folder succesfully", () => {
+    const folder = {
+      key: "1234",
+      name: "folder test",
+      parent: null
+    };
+
+    const newName = "new name";
+    const newParent = "newParent";
+
+    const testInitialState = Object.assign({}, initialState, {
+      folders: {
+        [folder.key]: folder
+      }
+    });
+
+    const expectedState = Object.assign({}, testInitialState, {
+      folders: {
+        [folder.key]: Object.assign({}, testInitialState.folders[folder.key], {
+          name: newName,
+          parent: newParent
+        })
+      }
+    });
+
+    expect(
+      reducer(testInitialState, {
+        type: actionTypes.DIR_RENAME,
+        folder: {
+          key: folder.key,
+          newName: newName,
+          newParent: newParent
+        }
+      })
+    ).toEqual(expectedState);
+  });
+
+  it("should delete folder succesfully", () => {
+    const firstFolder = {
+      key: "1234",
+      name: "first folder",
+      parent: null
+    };
+
+    const secondFolder = {
+      key: "4321",
+      name: "second folder",
+      parent: null
+    };
+
+    const testInitialState = Object.assign({}, initialState, {
+      folders: {
+        [firstFolder.key]: firstFolder,
+        [secondFolder.key]: secondFolder
+      }
+    });
+
+    const expectedState = Object.assign({}, testInitialState, {
+      folders: {
+        [secondFolder.key]: secondFolder
+      }
+    });
+
+    expect(
+      reducer(testInitialState, {
+        type: actionTypes.DIR_DELETE,
+        folder: {
+          key: firstFolder.key
+        }
+      })
+    ).toEqual(expectedState);
+  });
+});

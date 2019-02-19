@@ -67,19 +67,44 @@ const handleFileOperation = (state, action) => {
 };
 
 const handleFolderAdd = (state, action) => {
-  return initialState;
+  return Object.assign({}, state, {
+    [action.folder.key]: action.folder
+  });
 };
 
 const handleFolderRename = (state, action) => {
-  return state;
+  const folder = state[action.folder.key];
+  if (folder === undefined) {
+    return state;
+  }
+
+  const newName =
+    action.folder.newName !== undefined ? action.folder.newName : folder.name;
+  const newParent =
+    action.folder.newParent !== undefined
+      ? action.folder.newParent
+      : folder.parent;
+
+  return Object.assign({}, state, {
+    [action.folder.key]: Object.assign({}, folder, {
+      name: newName,
+      parent: newParent
+    })
+  });
 };
 
 const handleFolderDelete = (state, action) => {
-  return state;
+  return Object.keys(state).reduce((prev, curr) => {
+    if (curr === action.folder.key) {
+      return prev;
+    }
+    prev[curr] = state[curr];
+    return prev;
+  }, {});
 };
 
 const handleFolderOperation = (state, action) => {
-  switch (action) {
+  switch (action.type) {
     case actionTypes.DIR_ADD:
       return handleFolderAdd(state, action);
     case actionTypes.DIR_RENAME:
